@@ -2,7 +2,7 @@ package qtasabutton.test
 
 import cats.effect.{ContextShift, IO, Timer}
 
-trait IOTestExcetutionContext {
+trait IOTestExecutionContext {
 
   implicit val ioTestContextShift: ContextShift[IO] =
     IO.contextShift(scala.concurrent.ExecutionContext.Implicits.global)
