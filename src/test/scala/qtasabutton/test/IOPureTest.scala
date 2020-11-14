@@ -2,6 +2,6 @@ package qtasabutton.test
 
 import cats.effect.IO
 
-object PureTest {
+object IOPureTest {
   def apply[T](t: => IO[T]): T = t.unsafeRunSync()
 }
