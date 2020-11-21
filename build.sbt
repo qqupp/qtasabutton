@@ -19,5 +19,7 @@ lazy val root = (project in file("."))
     ),
     addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.10.3")
   )
+  .enablePlugins(JavaServerAppPackaging)
+  .enablePlugins(UniversalPlugin)
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
