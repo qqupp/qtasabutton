@@ -1,4 +1,4 @@
-package qtasabutton.test
+package queuegarden.test
 
 import cats.effect.{ContextShift, IO, Timer}
 
