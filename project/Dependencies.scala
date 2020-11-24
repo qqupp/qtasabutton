@@ -2,7 +2,8 @@ import sbt._
 
 object Dependencies {
 
-  lazy val mainDependencies = cats ++ circe ++ http4s ++ logging
+  lazy val mainDependencies =
+    cats ++ circe ++ http4s ++ logging ++ pureconfig
 
   lazy val testDependencies = scalaTest.map(_ % "test")
 
@@ -27,9 +28,14 @@ object Dependencies {
     "io.circe"        %% "circe-generic"       % circeVersion
   )
 
-  val LogbackVersion = "1.2.3"
+  val logbackVersion = "1.2.3"
   lazy val logging = Seq(
-    "ch.qos.logback"  %  "logback-classic"     % LogbackVersion
+    "ch.qos.logback"  %  "logback-classic"     % logbackVersion
+  )
+
+  val pureconfigVersion = "0.14.0"
+  lazy val pureconfig = Seq(
+    "com.github.pureconfig" %% "pureconfig" % pureconfigVersion
   )
 
 }

@@ -8,7 +8,8 @@ object Main extends IOApp {
   val server = new Server(ServerConfig(port = 8080))
 
   def run(args: List[String]): IO[ExitCode] = {
-    server.stream[IO]
+    server
+      .stream[IO]
       .compile
       .drain
       .as(ExitCode.Success)
