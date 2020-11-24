@@ -3,9 +3,10 @@ import sbt._
 object Dependencies {
 
   lazy val mainDependencies =
-    cats ++ circe ++ http4s ++ logging ++ pureconfig
+    cats ++ circe ++ http4s ++ logging ++ pureconfig ++ database
 
-  lazy val testDependencies = scalaTest.map(_ % "test")
+  lazy val testDependencies =
+    (scalaTest ++ databaseTesting).map(_ % "test")
 
   lazy val scalaTest = Seq("org.scalatest" %% "scalatest" % "3.2.2")
 
@@ -38,4 +39,14 @@ object Dependencies {
     "com.github.pureconfig" %% "pureconfig" % pureconfigVersion
   )
 
+  val dobieVersion = "0.9.2"
+  lazy val database = Seq(
+    "org.xerial"           % "sqlite-jdbc"             % "3.32.3.2",
+    "org.tpolecat"         %% "doobie-core"            % dobieVersion,
+    "org.tpolecat"         %% "doobie-hikari"          % dobieVersion,
+  )
+
+  lazy val databaseTesting = Seq(
+    "org.tpolecat"         %% "doobie-scalatest"       % dobieVersion
+  )
 }
