@@ -17,7 +17,9 @@ lazy val root = (project in file("."))
       "-feature",
       "-Xfatal-warnings",
     ),
-    addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.10.3")
+    addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.10.3"),
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oSD"),
+    run / fork := true
   )
   .enablePlugins(JavaServerAppPackaging)
   .enablePlugins(UniversalPlugin)
