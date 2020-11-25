@@ -8,7 +8,7 @@ class DBTransactor(config: DBConfig) {
 
   def xa[F[_]: Async: ContextShift] = Transactor.fromDriverManager(
     "org.sqlite.JDBC",
-    s"jdbc:sqlite:${config.database}.db",
+    s"jdbc:sqlite:${config.dbPath}",
     config.user,
     config.password,
     Blocker.liftExecutionContext(

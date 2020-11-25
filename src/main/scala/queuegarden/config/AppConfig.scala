@@ -1,4 +1,5 @@
 package queuegarden.config
 
 final case class AppConfig(
-    server: ServerConfig)
+    server: ServerConfig,
+    database: DBConfig)

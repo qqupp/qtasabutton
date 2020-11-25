@@ -4,6 +4,6 @@ import queuegarden.config.DBConfig
 
 object DBTestConfig {
 
-  val config = DBConfig("/tmp/testDatabase", "", "")
+  val config = DBConfig("/tmp/testDatabase.db", "", "")
 
 }
