@@ -16,7 +16,7 @@ class HomeMadeMigrationSpec extends AnyFlatSpec with Matchers {
   "migrate" should "create a schema with data if doesn't exist" in new DBOps {
     pureTest {
       for {
-        r <- new HomeMadeMigration[IO](testTransactor).migrate.attempt
+        r    <- new HomeMadeMigration[IO](testTransactor).migrate.attempt
         user <- getAdminUser.transact(testTransactor)
       } yield {
         r shouldBe a[Right[_, _]]
@@ -35,5 +35,5 @@ class HomeMadeMigrationSpec extends AnyFlatSpec with Matchers {
     }
   }
 
-  def getAdminUser= sql"""select * from user""".query[User].unique
+  def getAdminUser = sql"""select * from user""".query[User].unique
 }
