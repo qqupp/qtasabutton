@@ -6,14 +6,15 @@ import queuegarden.config.DBConfig
 
 class DBTransactor(config: DBConfig) {
 
-  def xa[F[_]: Async: ContextShift] = Transactor.fromDriverManager(
-    "org.sqlite.JDBC",
-    s"jdbc:sqlite:${config.dbPath}",
-    config.user,
-    config.password,
-    Blocker.liftExecutionContext(
-      scala.concurrent.ExecutionContext.Implicits.global
+  def xa[F[_]: Async: ContextShift]: Transactor[F] =
+    Transactor.fromDriverManager(
+      "org.sqlite.JDBC",
+      s"jdbc:sqlite:${config.dbPath}",
+      config.user,
+      config.password,
+      Blocker.liftExecutionContext(
+        scala.concurrent.ExecutionContext.Implicits.global
+      )
     )
-  )
 
 }

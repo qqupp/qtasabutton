@@ -16,23 +16,32 @@ class DBTransactorSpec
     val transactor = new DBTransactor(DBTestConfig.config).xa[IO]
 
     val dbquery = for {
-      _ <- dropTable
-      _ <- createTable
-      i1 <- insert(1, "leo")
-      i2 <- insert(2, "yui")
-      persons  <- selectStar
-    } yield TestData(i1  + i2, persons)
+      _       <- dropTable
+      _       <- createTable
+      i1      <- insert(1, "leo")
+      i2      <- insert(2, "yui")
+      persons <- selectStar
+    } yield TestData(i1 + i2, persons)
 
-    dbquery.transact(transactor).flatMap( td =>
-      IO {
-        td.insertedRows shouldBe 2
-        td.persons should contain theSameElementsAs List(TestPerson(1, "leo"), TestPerson(2, "yui"))
-      }
-    )
+    dbquery
+      .transact(transactor)
+      .flatMap(td =>
+        IO {
+          td.insertedRows shouldBe 2
+          td.persons should contain theSameElementsAs List(
+            TestPerson(1, "leo"),
+            TestPerson(2, "yui")
+          )
+        }
+      )
   }
 
-  case class TestData(insertedRows: Int, persons: List[TestPerson])
-  case class TestPerson(id: Int, name: String)
+  case class TestData(
+      insertedRows: Int,
+      persons: List[TestPerson])
+  case class TestPerson(
+      id: Int,
+      name: String)
 
   val dropTable: doobie.ConnectionIO[Int] =
     sql"""
@@ -44,7 +53,10 @@ class DBTransactorSpec
       create table person (id integer, name string)
     """.update.run
 
-  def insert(id: Int, name: String): doobie.ConnectionIO[Int] =
+  def insert(
+      id: Int,
+      name: String
+    ): doobie.ConnectionIO[Int] =
     sql"""
         insert into person values($id, $name)
        """.update.run
@@ -53,6 +65,5 @@ class DBTransactorSpec
     sql"""
          select * from person
        """.query[TestPerson].to[List]
-
 
 }
