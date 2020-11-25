@@ -13,7 +13,8 @@ trait DBOps extends IOSynchronousTestExecutionContext { self =>
   val testDBConfig = DBConfig(
     s"/tmp/${self.getClass.getName}-test${Random.nextInt()}.db",
     "",
-    ""
+    "",
+    1
   )
 
   val testTransactor: Transactor[IO] = new DBTransactor(testDBConfig).xa[IO]

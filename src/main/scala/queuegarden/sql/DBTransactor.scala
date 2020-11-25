@@ -1,10 +1,19 @@
 package queuegarden.sql
 
+import java.util.concurrent.Executors
+
 import cats.effect.{Async, Blocker, ContextShift}
 import doobie.util.transactor.Transactor
 import queuegarden.config.DBConfig
 
+import scala.concurrent.ExecutionContext
+
 class DBTransactor(config: DBConfig) {
+
+  private val dbBlockingEc =
+    ExecutionContext.fromExecutor(
+      Executors.newFixedThreadPool(config.queryConcurrencyLevel)
+    )
 
   def xa[F[_]: Async: ContextShift]: Transactor[F] =
     Transactor.fromDriverManager(
@@ -13,7 +22,7 @@ class DBTransactor(config: DBConfig) {
       config.user,
       config.password,
       Blocker.liftExecutionContext(
-        scala.concurrent.ExecutionContext.Implicits.global
+        dbBlockingEc
       )
     )
 
