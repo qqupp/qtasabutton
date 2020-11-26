@@ -8,7 +8,7 @@ import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
 import org.http4s.server.middleware.Logger
 import queuegarden.config.ServerConfig
-import routes.Login
+import routes.{Login, Welcome}
 
 import scala.concurrent.ExecutionContext.global
 
@@ -30,7 +30,8 @@ class Server(config: ServerConfig) {
       httpApp      = (
                        Routes.helloWorldRoutes[F](helloWorldAlg) <+>
                          Routes.jokeRoutes[F](jokeAlg) <+>
-                         Login.route[F]
+                         Login.route[F] <+>
+                         Welcome.routes[F]
                      ).orNotFound
 
       // With Middlewares in place
