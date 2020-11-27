@@ -1,6 +1,8 @@
 package queuegarden.sql
 
 import cats.effect.IO
+import cats.free.Free
+import doobie.free.connection
 import doobie.implicits._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -15,13 +17,16 @@ class DBTransactorSpec
   "db transactor" should "open a db connection with sqllite and perform some queries" in pureTest {
     val transactor = new DBTransactor(DBTestConfig.config).xa[IO]
 
-    val dbquery = for {
-      _       <- dropTable
-      _       <- createTable
-      i1      <- insert(1, "leo")
-      i2      <- insert(2, "yui")
-      persons <- selectStar
-    } yield TestData(i1 + i2, persons)
+    val dbquery: Free[connection.ConnectionOp, TestData] =
+      for {
+        _       <- dropTable
+        _       <- createTable
+        i1      <- insert(1, "leo")
+        i2      <- insert(2, "yui")
+        persons <- selectStar
+      } yield {
+        TestData(i1 + i2, persons)
+      }
 
     dbquery
       .transact(transactor)

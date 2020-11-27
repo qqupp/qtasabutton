@@ -4,7 +4,7 @@ import cats.data.{ Kleisli, OptionT }
 import cats.{ Applicative, Monad }
 import org.http4s.Request
 import org.http4s.server.AuthMiddleware
-import queuegarden.domain.User
+import queuegarden.domain.{ AdminUser, NormalUser, User }
 
 object Authentication {
 
@@ -12,7 +12,11 @@ object Authentication {
     Kleisli { r =>
       OptionT.fromOption {
         val user = r.params.get("username")
-        user.map(User(0, _))
+        user.map(name =>
+          if (name == "admin")
+            AdminUser(0, name)
+          else NormalUser(1, name)
+        )
       }
     }
 
