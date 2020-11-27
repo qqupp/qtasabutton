@@ -18,9 +18,10 @@ object Login {
   def route[F[_]: Applicative: Defer]: HttpRoutes[F] = {
     val dsl = new Http4sDsl[F] {}
     import dsl._
-    HttpRoutes.of[F] { case GET -> Root / "login" =>
-      val o: Status.Ok.type = Ok
-      Ok(loginPage, ContentType.html)
+    HttpRoutes.of[F] {
+      case GET -> Root / "login" =>
+        val o: Status.Ok.type = Ok
+        Ok(loginPage, ContentType.html)
     }
   }
 }

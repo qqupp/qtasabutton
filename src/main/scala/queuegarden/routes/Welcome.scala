@@ -14,8 +14,9 @@ object Welcome {
   def authedRoutes[F[_]: Applicative: Defer]: AuthedRoutes[User, F] = {
     val dsl = new Http4sDsl[F] {}
     import dsl._
-    AuthedRoutes.of[User, F] { case GET -> Root / "welcome" as user =>
-      Ok(s"Welcome, ${user.name}")
+    AuthedRoutes.of[User, F] {
+      case GET -> Root / "welcome" as user =>
+        Ok(s"Welcome, ${user.name}")
     }
   }
 
