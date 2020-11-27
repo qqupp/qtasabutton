@@ -1,8 +1,8 @@
 package queuegarden.routes
 
-import cats.{Applicative, Defer}
+import cats.{ Applicative, Defer }
 import org.http4s.dsl.Http4sDsl
-import org.http4s.{HttpRoutes, Status}
+import org.http4s.{ HttpRoutes, Status }
 
 object Login {
 

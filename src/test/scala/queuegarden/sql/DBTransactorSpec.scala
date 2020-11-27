@@ -38,10 +38,12 @@ class DBTransactorSpec
 
   case class TestData(
       insertedRows: Int,
-      persons: List[TestPerson])
+      persons: List[TestPerson]
+    )
   case class TestPerson(
       id: Int,
-      name: String)
+      name: String
+    )
 
   val dropTable: doobie.ConnectionIO[Int] =
     sql"""

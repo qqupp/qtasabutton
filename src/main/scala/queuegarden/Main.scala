@@ -1,10 +1,10 @@
 package queuegarden
 
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{ ExitCode, IO, IOApp }
 import doobie.util.transactor
 import doobie.util.transactor.Transactor
-import queuegarden.config.{ConfigLoader, ServerConfig}
-import queuegarden.sql.{DBTransactor, HomeMadeMigration}
+import queuegarden.config.{ ConfigLoader, ServerConfig }
+import queuegarden.sql.{ DBTransactor, HomeMadeMigration }
 import cats.implicits._
 
 object Main extends IOApp {

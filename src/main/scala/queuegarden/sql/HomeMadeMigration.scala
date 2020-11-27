@@ -6,7 +6,8 @@ import doobie.implicits._
 import cats.implicits._
 
 class HomeMadeMigration[F[_]](
-    transactor: Transactor[F]) {
+    transactor: Transactor[F]
+  ) {
 
   val userTable: doobie.Update0 =
     sql"""CREATE TABLE IF NOT EXISTS user (id INTEGER PRIMARY KEY, name VARCHAR)""".update

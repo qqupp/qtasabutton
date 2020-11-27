@@ -2,7 +2,7 @@ package queuegarden.sql
 
 import java.util.concurrent.Executors
 
-import cats.effect.{Async, Blocker, ContextShift}
+import cats.effect.{ Async, Blocker, ContextShift }
 import doobie.util.transactor.Transactor
 import queuegarden.config.DBConfig
 

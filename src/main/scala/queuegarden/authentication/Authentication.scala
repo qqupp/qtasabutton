@@ -1,7 +1,7 @@
 package queuegarden.authentication
 
-import cats.data.{Kleisli, OptionT}
-import cats.{Applicative, Monad}
+import cats.data.{ Kleisli, OptionT }
+import cats.{ Applicative, Monad }
 import org.http4s.Request
 import org.http4s.server.AuthMiddleware
 import queuegarden.domain.User
@@ -17,6 +17,5 @@ object Authentication {
     }
 
   def middleware[F[_]: Monad]: AuthMiddleware[F, User] =
-    AuthMiddleware(authUser[F])
-
+    AuthMiddleware.apply(authUser[F])
 }

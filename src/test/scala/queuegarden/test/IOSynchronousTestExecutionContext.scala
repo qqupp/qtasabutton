@@ -1,6 +1,6 @@
 package queuegarden.test
 
-import cats.effect.{ContextShift, IO, Timer}
+import cats.effect.{ ContextShift, IO, Timer }
 
 import scala.concurrent.ExecutionContext
 

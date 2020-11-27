@@ -1,10 +1,10 @@
 package queuegarden
 
-import cats.data.{Kleisli, OptionT}
+import cats.data.{ Kleisli, OptionT }
 import cats.effect.Sync
 import cats.implicits._
 import org.http4s.dsl.Http4sDsl
-import org.http4s.{HttpRoutes, Request, Response}
+import org.http4s.{ HttpRoutes, Request, Response }
 
 object Routes {
 
