@@ -64,7 +64,7 @@ object ParamPageTest {
 
   lazy val queryParams01Extractor: ParamExtractor[QueryParams01] =
     (
-      optional("b", QueryParamDecoder.booleanQueryParamDecoder, false),
+      defaulted("b", QueryParamDecoder.booleanQueryParamDecoder, false),
       required("i", QueryParamDecoder.intQueryParamDecoder),
       required("c", QueryParamDecoder.charQueryParamDecoder),
       required("b", QueryParamDecoder.booleanQueryParamDecoder),
@@ -79,14 +79,14 @@ object ParamPageTest {
         withQueryParam(
           (
             required("posInt1", PosInt.queryParamDecoder),
-            optional("posInt2", PosInt.queryParamDecoder, PosInt.one),
-            optional("posInt3", PosInt.queryParamDecoder, PosInt.one),
-            optional("posInt4", PosInt.queryParamDecoder, PosInt.one),
-            optional("posInt5", PosInt.queryParamDecoder, PosInt.one),
-            optional("posInt6", PosInt.queryParamDecoder, PosInt.one),
-            optional("posInt7", PosInt.queryParamDecoder, PosInt.one),
-            optional("posInt8", PosInt.queryParamDecoder, PosInt.one),
-            optional("anInt", QueryParamDecoder.intQueryParamDecoder, 10)
+            defaulted("posInt2", PosInt.queryParamDecoder, PosInt.one),
+            defaulted("posInt3", PosInt.queryParamDecoder, PosInt.one),
+            defaulted("posInt4", PosInt.queryParamDecoder, PosInt.one),
+            defaulted("posInt5", PosInt.queryParamDecoder, PosInt.one),
+            defaulted("posInt6", PosInt.queryParamDecoder, PosInt.one),
+            defaulted("posInt7", PosInt.queryParamDecoder, PosInt.one),
+            defaulted("posInt8", PosInt.queryParamDecoder, PosInt.one),
+            defaulted("anInt", QueryParamDecoder.intQueryParamDecoder, 10)
           ).mapN(Tuple9.apply),
           req
         ) {
@@ -109,6 +109,12 @@ object ParamPageTest {
           _ => BadRequest(),
           data => Ok(paramPage(List(), Some(data)), ContentType.html)
         )
+
+      case req @ GET -> Root / "param04" =>
+        withQueryParam(
+          ParamExtractor.multi("a", PosInt.queryParamDecoder),
+          req
+        )(data => Ok(paramPage(data, None), ContentType.html))
     }
   }
 
