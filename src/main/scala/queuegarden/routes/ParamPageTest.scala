@@ -14,6 +14,7 @@ import org.http4s.{
 import queuegarden.routes.params._
 import queuegarden.routes.params.PosInt._
 import ParamExtractor._
+import cats.data.Validated.Valid
 
 object ParamPageTest {
 
@@ -101,6 +102,13 @@ object ParamPageTest {
           case x =>
             Ok(paramPage(List(), Some(x)), ContentType.html)
         }
+
+      case req @ GET -> Root / "param03"
+          :? queryParamsForThisRouteExtractor(roba) =>
+        roba.fold(
+          _ => BadRequest(),
+          data => Ok(paramPage(List(), Some(data)), ContentType.html)
+        )
     }
   }
 

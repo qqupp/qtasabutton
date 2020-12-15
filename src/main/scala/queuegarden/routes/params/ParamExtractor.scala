@@ -20,6 +20,11 @@ trait ParamExtractor[T] { self =>
         self.extract(params).map(f)
     }
 
+  def unapply(
+      params: Map[String, collection.Seq[String]]
+    ): Option[ValidatedNel[ParseFailure, T]] =
+    Some(extract(params))
+
 }
 
 object ParamExtractor {
