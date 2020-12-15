@@ -1,58 +1,90 @@
 package queuegarden.routes.params
 
+import cats.Applicative
 import cats.data.ValidatedNel
-import org.http4s.ParseFailure
+import org.http4s.{ ParseFailure, QueryParamDecoder, QueryParameterValue }
 import cats.data._
 import cats.implicits._
 
 trait ParamExtractor[T] { self =>
 
-  def unapply(
+  def extract(
       params: Map[String, collection.Seq[String]]
-    ): Option[ValidatedNel[ParseFailure, T]]
+    ): ValidatedNel[ParseFailure, T]
 
   def map[T1](f: T => T1): ParamExtractor[T1] =
     new ParamExtractor[T1] {
-      def unapply(
+      def extract(
           params: Map[String, collection.Seq[String]]
-        ): Option[ValidatedNel[ParseFailure, T1]] =
-        self.unapply(params).map(_.map(f))
+        ): ValidatedNel[ParseFailure, T1] =
+        self.extract(params).map(f)
     }
 
 }
 
 object ParamExtractor {
 
-  def comb2[A, B](
-      p1: ParamExtractor[A],
-      p2: ParamExtractor[B]
-    ): ParamExtractor[(A, B)] = new ParamExtractor[(A, B)] {
-    def unapply(
+  def required[T](
+      name: String,
+      queryParamDecoder: QueryParamDecoder[T]
+    ): ParamExtractor[T] = new ParamExtractor[T] {
+    def extract(
         params: Map[String, collection.Seq[String]]
-      ): Option[ValidatedNel[ParseFailure, (A, B)]] =
-      (p1.unapply(params), p2.unapply(params)).mapN((p1res, p2res) =>
-        (p1res, p2res).mapN((_, _))
-      )
+      ): ValidatedNel[ParseFailure, T] =
+      params.get(name).flatMap(_.headOption) match {
+        case None      =>
+          val msg = s"Missing required parameter $name"
+          Validated.invalidNel(
+            ParseFailure(msg, msg)
+          )
+        case Some(str) => queryParamDecoder.decode(QueryParameterValue(str))
+      }
   }
 
-  implicit class ParamExtractorOps[A](e1: ParamExtractor[A]) {
-    def &[B](e2: ParamExtractor[B]): ParamExtractor[(A, B)] =
-      comb2(e1, e2)
+  def optional[T](
+      name: String,
+      queryParamDecoder: QueryParamDecoder[T]
+    ): ParamExtractor[Option[T]] = new ParamExtractor[Option[T]] {
+    def extract(
+        params: Map[String, collection.Seq[String]]
+      ): ValidatedNel[ParseFailure, Option[T]] =
+      params
+        .get(name)
+        .flatMap(_.headOption)
+        .map(str => queryParamDecoder.decode(QueryParameterValue(str)))
+        .sequence
+
   }
 
-  import shapeless._
-  import ops.tuple.FlatMapper
-  import syntax.std.tuple._
+  def optional[T](
+      name: String,
+      queryParamDecoder: QueryParamDecoder[T],
+      default: T
+    ): ParamExtractor[T] =
+    optional(name, queryParamDecoder).map(_.getOrElse(default))
 
-  trait LowPriorityFlatten extends Poly1              {
-    implicit def default[T] = at[T](Tuple1(_))
-  }
-  object flatten           extends LowPriorityFlatten {
-    implicit def caseTuple[P <: Product](
-        implicit
-        lfm: Lazy[FlatMapper[P, flatten.type]]
-      ) =
-      at[P](lfm.value(_))
-  }
+  implicit val parmaExtractorApplicaitve: Applicative[ParamExtractor] =
+    new Applicative[ParamExtractor] {
+      def pure[A](x: A): ParamExtractor[A] = new ParamExtractor[A] {
+        def extract(
+            params: Map[String, collection.Seq[String]]
+          ): ValidatedNel[ParseFailure, A] = Validated.validNel(x)
+      }
+
+      def ap[A, B](
+          ff: ParamExtractor[A => B]
+        )(
+          fa: ParamExtractor[A]
+        ): ParamExtractor[B] = new ParamExtractor[B] {
+        def extract(
+            params: Map[String, collection.Seq[String]]
+          ): ValidatedNel[ParseFailure, B] = {
+
+          val eff: ValidatedNel[ParseFailure, A => B] = ff.extract(params)
+          val efa: ValidatedNel[ParseFailure, A]      = fa.extract(params)
+          (eff, efa).mapN { case (f, a) => f(a) }
+        }
+      }
+    }
 
 }
