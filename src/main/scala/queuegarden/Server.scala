@@ -1,6 +1,6 @@
 package queuegarden
 
-import cats.effect.{ ConcurrentEffect, ContextShift, Timer }
+import cats.effect.{ ConcurrentEffect, ContextShift, ExitCode, Timer }
 import cats.implicits._
 import fs2.Stream
 import org.http4s.client.blaze.BlazeClientBuilder
@@ -18,7 +18,7 @@ class Server(config: ServerConfig) {
       implicit
       T: Timer[F],
       C: ContextShift[F]
-    ): Stream[F, Nothing] = {
+    ): Stream[F, ExitCode] =
     for {
       client       <- BlazeClientBuilder[F](global).stream
       helloWorldAlg = HelloWorld.impl[F]
@@ -44,6 +44,5 @@ class Server(config: ServerConfig) {
                     .withHttpApp(finalHttpApp)
                     .serve
     } yield exitCode
-  }.drain
 
 }
