@@ -3,6 +3,7 @@ package queuegarden
 import cats.effect.{ ConcurrentEffect, ContextShift, ExitCode, Timer }
 import cats.implicits._
 import fs2.Stream
+import org.http4s.HttpRoutes
 import org.http4s.client.blaze.BlazeClientBuilder
 import org.http4s.implicits._
 import org.http4s.server.blaze.BlazeServerBuilder
@@ -15,7 +16,8 @@ import scala.concurrent.ExecutionContext.global
 class Server(config: ServerConfig) {
 
   def stream[F[_]: ConcurrentEffect](
-      implicit
+      otherRoutes: HttpRoutes[F]
+    )(implicit
       T: Timer[F],
       C: ContextShift[F]
     ): Stream[F, ExitCode] =
@@ -29,7 +31,8 @@ class Server(config: ServerConfig) {
       // want to extract a segments not checked
       // in the underlying routes.
       httpApp      = (
-                       ParamPageTest.route[F] <+>
+                       otherRoutes <+>
+                         ParamPageTest.route[F] <+>
                          Routes.helloWorldRoutes[F](helloWorldAlg) <+>
                          Routes.jokeRoutes[F](jokeAlg) <+>
                          Login.route[F] <+>
